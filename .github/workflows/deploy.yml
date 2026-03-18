@@ -1,0 +1,59 @@
+name: Build and Deploy Lambda
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    environment: AWS
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-session-token: ${{ secrets.AWS_SESSION_TOKEN }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.registry }}
+          ECR_REPOSITORY: tech-challenge-notification-service-repo
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+  deploy-infra:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    environment: AWS
+    defaults:
+      run:
+        working-directory: terraform
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: |
+          terraform init \
+            -backend-config="bucket=${{ secrets.AWS_S3_TF_STATE_BUCKET_NAME }}" \
+            -backend-config="region=${{ secrets.AWS_REGION }}"
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
