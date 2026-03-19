@@ -30,7 +30,7 @@ resource "aws_lambda_function" "this" {
   function_name = "tech-challenge-notification-service"
   role          = data.aws_iam_role.lab_role.arn
   package_type  = "Image"
-  image_uri     = "${data.aws_ecr_repository.this.repository_url}:latest"
+  image_uri     = "${data.aws_ecr_repository.this.repository_url}:${var.image_tag}"
 
   reserved_concurrent_executions = 3
 
