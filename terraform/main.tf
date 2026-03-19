@@ -26,11 +26,18 @@ data "aws_iam_role" "lab_role" {
   name = "LabRole"
 }
 
-module "lambda" {
-  source = "github.com/13SOAT-andromeda/iac-tech-challenge-infra//modules/lambda?ref=main"
+resource "aws_lambda_function" "this" {
+  function_name = "tech-challenge-notification-service"
+  role          = data.aws_iam_role.lab_role.arn
+  package_type  = "Image"
+  image_uri     = "${data.aws_ecr_repository.this.repository_url}:latest"
 
-  function_name                  = "tech-challenge-notification-service"
-  image_uri                      = "${data.aws_ecr_repository.this.repository_url}:latest"
-  role_arn                       = data.aws_iam_role.lab_role.arn
   reserved_concurrent_executions = 3
+
+  timeout     = 30
+  memory_size = 128
+
+  image_config {
+    command = ["index.handler"]
+  }
 }
