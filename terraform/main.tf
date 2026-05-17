@@ -38,6 +38,6 @@ resource "aws_lambda_function" "this" {
   memory_size = 128
 
   image_config {
-    command = ["index.handler"]
+    command = ["bootstrap"]
   }
 }

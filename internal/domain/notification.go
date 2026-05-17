@@ -1,0 +1,52 @@
+package domain
+
+import (
+	"errors"
+	"time"
+)
+
+type NotificationType string
+
+const (
+	NotificationTypeEmail NotificationType = "email"
+	NotificationTypeSMS   NotificationType = "sms"
+	NotificationTypePush  NotificationType = "push"
+)
+
+type NotificationStatus string
+
+const (
+	NotificationStatusPending NotificationStatus = "pending"
+	NotificationStatusSent    NotificationStatus = "sent"
+	NotificationStatusFailed  NotificationStatus = "failed"
+)
+
+type Notification struct {
+	ID        string
+	Type      NotificationType
+	Recipient string
+	Subject   string
+	Body      string
+	Status    NotificationStatus
+	CreatedAt time.Time
+}
+
+func NewNotification(notifType NotificationType, recipient, subject, body string) (*Notification, error) {
+	if recipient == "" {
+		return nil, errors.New("recipient is required")
+	}
+	if body == "" {
+		return nil, errors.New("body is required")
+	}
+	if notifType != NotificationTypeEmail && notifType != NotificationTypeSMS && notifType != NotificationTypePush {
+		return nil, errors.New("invalid notification type")
+	}
+	return &Notification{
+		Type:      notifType,
+		Recipient: recipient,
+		Subject:   subject,
+		Body:      body,
+		Status:    NotificationStatusPending,
+		CreatedAt: time.Now(),
+	}, nil
+}
