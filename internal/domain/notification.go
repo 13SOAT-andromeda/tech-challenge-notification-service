@@ -21,19 +21,24 @@ const (
 	NotificationStatusFailed  NotificationStatus = "failed"
 )
 
+type Recipient struct {
+	Email string
+	Name  string
+}
+
 type Notification struct {
 	ID        string
 	Type      NotificationType
-	Recipient string
+	Recipient Recipient
 	Subject   string
 	Body      string
 	Status    NotificationStatus
 	CreatedAt time.Time
 }
 
-func NewNotification(notifType NotificationType, recipient, subject, body string) (*Notification, error) {
-	if recipient == "" {
-		return nil, errors.New("recipient is required")
+func NewNotification(notifType NotificationType, recipient Recipient, subject, body string) (*Notification, error) {
+	if recipient.Email == "" {
+		return nil, errors.New("recipient email is required")
 	}
 	if body == "" {
 		return nil, errors.New("body is required")

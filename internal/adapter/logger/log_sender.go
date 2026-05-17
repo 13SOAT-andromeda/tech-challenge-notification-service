@@ -14,6 +14,6 @@ func NewLogSender() *LogSender {
 
 func (s *LogSender) Send(notification *domain.Notification) error {
 	log.Printf("[NOTIFICATION] type=%s recipient=%s subject=%q",
-		notification.Type, notification.Recipient, notification.Subject)
+		notification.Type, notification.Recipient.Email, notification.Subject)
 	return nil
 }
