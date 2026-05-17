@@ -109,7 +109,7 @@ type Recipient struct {
 }
 ```
 
-`Notification` remains unchanged. `Recipient` is added as a value object.
+`Recipient` is added as a value object. The `Notification.Recipient` field changes from `string` to `domain.Recipient` so the Mailtrap adapter can read both `Email` and `Name` from a single `Send(notification)` call.
 
 ---
 
@@ -339,7 +339,12 @@ AWS_REGION            AWS region (default: us-east-1)
 
 ```go
 templateRepo := s3adapter.NewTemplateRepository(s3Client, os.Getenv("S3_BUCKET_NAME"))
-emailSender  := mailtrap.NewEmailSender(...)
+emailSender  := mailtrap.NewEmailSender(
+    os.Getenv("MAILTRAP_TOKEN"),
+    os.Getenv("MAILTRAP_URL"),
+    os.Getenv("MAILTRAP_FROM_EMAIL"),
+    os.Getenv("MAILTRAP_FROM_NAME"),
+)
 
 sendNotif    := send_notification.New(templateRepo, emailSender)
 getTemplate  := get_template.New(templateRepo)
