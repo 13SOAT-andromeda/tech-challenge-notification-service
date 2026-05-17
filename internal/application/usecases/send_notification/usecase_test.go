@@ -59,4 +59,6 @@ func TestSendNotification_Execute_SenderFailure(t *testing.T) {
 	err := uc.Execute("order-approval", domain.Recipient{Email: "a@b.com", Name: "A"}, nil)
 
 	assert.EqualError(t, err, "mailtrap unavailable")
+	mockRepo.AssertExpectations(t)
+	mockSender.AssertExpectations(t)
 }
