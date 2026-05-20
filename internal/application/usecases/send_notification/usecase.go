@@ -1,6 +1,7 @@
 package send_notification
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/JulioCVaz/tech-challenge-notification-service/internal/application/ports"
@@ -17,12 +18,23 @@ func New(repo ports.TemplateRepository, sender ports.NotificationSender) *UseCas
 }
 
 func (uc *UseCase) Execute(templateType string, recipient domain.Recipient, data map[string]string) error {
+	if recipient.Email == "" {
+		return fmt.Errorf("recipient email is required")
+	}
+
 	tmpl, err := uc.repo.Get(templateType)
 	if err != nil {
 		return err
 	}
 
-	renderedHTML := tmpl.Render(data)
+	merged := make(map[string]string, len(data)+2)
+	for k, v := range data {
+		merged[k] = v
+	}
+	merged["name"] = recipient.Name
+	merged["email"] = recipient.Email
+
+	renderedHTML := tmpl.Render(merged)
 
 	notification := &domain.Notification{
 		Type:      domain.NotificationTypeEmail,
