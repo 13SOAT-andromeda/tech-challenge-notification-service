@@ -64,4 +64,12 @@ jobs:
             -backend-config="region=${{ secrets.AWS_REGION }}"
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve -var="image_tag=${{ github.sha }}"
+        run: |
+          terraform apply -auto-approve \
+            -var="image_tag=${{ github.sha }}" \
+            -var="mailtrap_token=${{ secrets.MAILTRAP_TOKEN }}" \
+            -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
+            -var="s3_bucket_name=${{ vars.S3_BUCKET_NAME }}" \
+            -var="mailtrap_url=${{ vars.MAILTRAP_URL }}" \
+            -var="mailtrap_from_email=${{ vars.MAILTRAP_FROM_EMAIL }}" \
+            -var="mailtrap_from_name=${{ vars.MAILTRAP_FROM_NAME }}"

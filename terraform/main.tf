@@ -26,6 +26,10 @@ data "aws_iam_role" "lab_role" {
   name = "LabRole"
 }
 
+data "aws_sqs_queue" "notification_events" {
+  name = var.sqs_queue_name
+}
+
 resource "aws_lambda_function" "this" {
   function_name = "tech-challenge-notification-service"
   role          = data.aws_iam_role.lab_role.arn
@@ -40,4 +44,22 @@ resource "aws_lambda_function" "this" {
   image_config {
     command = ["bootstrap"]
   }
+
+  environment {
+    variables = {
+      AWS_REGION         = var.aws_region
+      S3_BUCKET_NAME     = var.s3_bucket_name
+      MAILTRAP_TOKEN     = var.mailtrap_token
+      MAILTRAP_URL       = var.mailtrap_url
+      MAILTRAP_FROM_EMAIL = var.mailtrap_from_email
+      MAILTRAP_FROM_NAME = var.mailtrap_from_name
+      JWT_SECRET         = var.jwt_secret
+    }
+  }
+}
+
+resource "aws_lambda_event_source_mapping" "sqs_trigger" {
+  event_source_arn = data.aws_sqs_queue.notification_events.arn
+  function_name    = aws_lambda_function.this.arn
+  batch_size       = 10
 }
