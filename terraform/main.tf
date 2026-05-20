@@ -47,13 +47,12 @@ resource "aws_lambda_function" "this" {
 
   environment {
     variables = {
-      AWS_REGION         = var.aws_region
-      S3_BUCKET_NAME     = var.s3_bucket_name
-      MAILTRAP_TOKEN     = var.mailtrap_token
-      MAILTRAP_URL       = var.mailtrap_url
+      S3_BUCKET_NAME      = var.s3_bucket_name
+      MAILTRAP_TOKEN      = var.mailtrap_token
+      MAILTRAP_URL        = var.mailtrap_url
       MAILTRAP_FROM_EMAIL = var.mailtrap_from_email
-      MAILTRAP_FROM_NAME = var.mailtrap_from_name
-      JWT_SECRET         = var.jwt_secret
+      MAILTRAP_FROM_NAME  = var.mailtrap_from_name
+      JWT_SECRET          = var.jwt_secret
     }
   }
 }
