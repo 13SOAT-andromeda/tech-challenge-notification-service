@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><title>Pagamento Aguardado</title></head>
+<body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px">
+  <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;padding:32px">
+    <h2 style="color:#1a56db">💳 Pagamento Aguardado para Sua Ordem de Serviço</h2>
+    <p>Olá, <strong>$name</strong>!</p>
+    <p>Sua ordem de serviço foi concluída e está aguardando o pagamento. Confira o resumo abaixo:</p>
+
+    <p style="color:#555;font-size:14px"><strong>Ordem:</strong> $order_id</p>
+
+    <h3 style="color:#374151;margin-top:24px">Produtos</h3>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+      <thead>
+        <tr style="background:#e5e7eb">
+          <th style="padding:10px;text-align:left">Item</th>
+          <th style="padding:10px;text-align:center">Qtd</th>
+          <th style="padding:10px;text-align:right">Valor Unit.</th>
+        </tr>
+      </thead>
+      <tbody>
+        $products
+      </tbody>
+    </table>
+
+    <h3 style="color:#374151;margin-top:16px">Serviços</h3>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
+      <thead>
+        <tr style="background:#e5e7eb">
+          <th style="padding:10px;text-align:left">Serviço</th>
+          <th style="padding:10px;text-align:center">Qtd</th>
+          <th style="padding:10px;text-align:right">Valor Unit.</th>
+        </tr>
+      </thead>
+      <tbody>
+        $services
+      </tbody>
+    </table>
+
+    <p style="font-size:16px;font-weight:bold;text-align:right;border-top:2px solid #eee;padding-top:12px">
+      Total: <span style="color:#1a56db">$total_amount</span>
+    </p>
+
+    <div style="text-align:center;margin:32px 0">
+      <a href="$link_payment"
+         style="display:inline-block;background:#1a56db;color:#fff;padding:14px 40px;border-radius:6px;text-decoration:none;font-size:16px;font-weight:bold">
+        💳 Realizar Pagamento
+      </a>
+    </div>
+
+    <p style="color:#999;font-size:12px;margin-top:24px">
+      Em caso de dúvidas, entre em contato com nossa equipe.
+    </p>
+  </div>
+</body>
+</html>
