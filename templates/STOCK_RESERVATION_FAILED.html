@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><title>Falha na Reserva de Estoque</title></head>
+<body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px">
+  <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;padding:32px">
+    <h2 style="color:#c0392b">❌ Falha na Reserva de Estoque</h2>
+    <p>Olá, <strong>$name</strong>!</p>
+    <p>Infelizmente não foi possível reservar o estoque para o seu pedido.</p>
+    <table style="width:100%;border-collapse:collapse;margin:20px 0">
+      <tr style="background:#f0f0f0">
+        <td style="padding:10px;font-weight:bold">Produto</td>
+        <td style="padding:10px">$product_name</td>
+      </tr>
+      <tr>
+        <td style="padding:10px;font-weight:bold">Quantidade Solicitada</td>
+        <td style="padding:10px">$quantity_requested unidades</td>
+      </tr>
+      <tr style="background:#f0f0f0">
+        <td style="padding:10px;font-weight:bold">Estoque Disponível</td>
+        <td style="padding:10px">$stock_available unidades</td>
+      </tr>
+      <tr>
+        <td style="padding:10px;font-weight:bold">Motivo</td>
+        <td style="padding:10px">$failure_reason</td>
+      </tr>
+      <tr style="background:#f0f0f0">
+        <td style="padding:10px;font-weight:bold">Pedido</td>
+        <td style="padding:10px">$order_id</td>
+      </tr>
+    </table>
+    <p style="color:#666;font-size:14px">Entre em contato com o suporte caso precise de assistência.</p>
+  </div>
+</body>
+</html>

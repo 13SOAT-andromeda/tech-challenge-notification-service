@@ -23,7 +23,7 @@ func NewDispatcher(c *consumer.NotificationConsumer, h *handlers.TemplateHandler
 
 type eventProbe struct {
 	Records []struct {
-		EventSource string `json:"EventSource"`
+		EventSource string `json:"eventSource"`
 	} `json:"Records"`
 	HTTPMethod string `json:"httpMethod"`
 }
@@ -34,12 +34,21 @@ func (d *Dispatcher) Dispatch(ctx context.Context, raw json.RawMessage) (interfa
 		return nil, fmt.Errorf("failed to probe event type: %w", err)
 	}
 
-	if len(probe.Records) > 0 && probe.Records[0].EventSource == "aws:sns" {
-		var snsEvent events.SNSEvent
-		if err := json.Unmarshal(raw, &snsEvent); err != nil {
-			return nil, fmt.Errorf("failed to unmarshal SNS event: %w", err)
+	if len(probe.Records) > 0 {
+		switch probe.Records[0].EventSource {
+		case "aws:sns":
+			var snsEvent events.SNSEvent
+			if err := json.Unmarshal(raw, &snsEvent); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal SNS event: %w", err)
+			}
+			return nil, d.consumer.Consume(ctx, snsEvent)
+		case "aws:sqs":
+			var sqsEvent events.SQSEvent
+			if err := json.Unmarshal(raw, &sqsEvent); err != nil {
+				return nil, fmt.Errorf("failed to unmarshal SQS event: %w", err)
+			}
+			return nil, d.consumer.ConsumeSQS(ctx, sqsEvent)
 		}
-		return nil, d.consumer.Consume(ctx, snsEvent)
 	}
 
 	if probe.HTTPMethod != "" {

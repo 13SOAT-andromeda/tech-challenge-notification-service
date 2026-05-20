@@ -12,6 +12,16 @@ import (
 	"github.com/JulioCVaz/tech-challenge-notification-service/internal/domain"
 )
 
+type snsEnvelope struct {
+	Message           string                    `json:"Message"`
+	MessageAttributes map[string]snsAttrValue   `json:"MessageAttributes"`
+}
+
+type snsAttrValue struct {
+	Type  string `json:"Type"`
+	Value string `json:"Value"`
+}
+
 type NotificationConsumer struct {
 	useCase *send_notification.UseCase
 }
@@ -68,6 +78,37 @@ func (c *NotificationConsumer) Consume(ctx context.Context, event events.SNSEven
 		}
 
 		log.Printf("notification processed successfully: %s", record.SNS.MessageID)
+	}
+	return nil
+}
+
+func (c *NotificationConsumer) ConsumeSQS(ctx context.Context, event events.SQSEvent) error {
+	for _, record := range event.Records {
+		var envelope snsEnvelope
+		if err := json.Unmarshal([]byte(record.Body), &envelope); err != nil {
+			return fmt.Errorf("failed to parse SNS envelope from SQS body [%s]: %w", record.MessageId, err)
+		}
+
+		attr, ok := envelope.MessageAttributes["templateType"]
+		if !ok {
+			return fmt.Errorf("missing templateType attribute in SQS record %s", record.MessageId)
+		}
+
+		var body notificationBody
+		if err := json.Unmarshal([]byte(envelope.Message), &body); err != nil {
+			return fmt.Errorf("failed to parse notification body in SQS record %s: %w", record.MessageId, err)
+		}
+
+		recipient := domain.Recipient{
+			Email: body.Recipient.Email,
+			Name:  body.Recipient.Name,
+		}
+
+		if err := c.useCase.Execute(attr.Value, recipient, body.Data); err != nil {
+			return fmt.Errorf("failed to process notification [templateType=%s record=%s]: %w", attr.Value, record.MessageId, err)
+		}
+
+		log.Printf("notification processed: templateType=%s record=%s", attr.Value, record.MessageId)
 	}
 	return nil
 }

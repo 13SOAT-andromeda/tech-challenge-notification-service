@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head><meta charset="UTF-8"><title>Aprovação de Ordem de Serviço</title></head>
+<body style="font-family:Arial,sans-serif;background:#f4f4f4;padding:20px">
+  <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:8px;padding:32px">
+    <h2 style="color:#1a56db">🔧 Ordem de Serviço Aguardando Aprovação</h2>
+    <p>Olá, <strong>$name</strong>!</p>
+    <p>Sua ordem de serviço foi analisada e está aguardando a sua aprovação. Confira os detalhes abaixo:</p>
+
+    <p style="color:#555;font-size:14px"><strong>Ordem:</strong> $order_id</p>
+
+    <table style="width:100%;border-collapse:collapse;margin:20px 0">
+      <thead>
+        <tr style="background:#1a56db;color:#fff">
+          <th style="padding:10px;text-align:left">Item</th>
+          <th style="padding:10px;text-align:center">Qtd</th>
+          <th style="padding:10px;text-align:right">Valor Unit.</th>
+        </tr>
+      </thead>
+      <tbody>
+        $items
+      </tbody>
+    </table>
+
+    <p style="font-size:16px;font-weight:bold;text-align:right;border-top:2px solid #eee;padding-top:12px">
+      Total: <span style="color:#1a56db">$total_amount</span>
+    </p>
+
+    <p style="margin-top:24px">Para prosseguir, selecione uma das opções abaixo:</p>
+
+    <div style="text-align:center;margin:32px 0">
+      <a href="$link_confirmation"
+         style="display:inline-block;background:#15803d;color:#fff;padding:14px 32px;border-radius:6px;text-decoration:none;font-size:16px;font-weight:bold;margin-right:16px">
+        ✅ Confirmar Ordem
+      </a>
+      <a href="$link_cancellation"
+         style="display:inline-block;background:#b91c1c;color:#fff;padding:14px 32px;border-radius:6px;text-decoration:none;font-size:16px;font-weight:bold">
+        ❌ Cancelar Ordem
+      </a>
+    </div>
+
+    <p style="color:#999;font-size:12px;margin-top:24px">
+      Este link expirará em 7 dias. Caso não reconheça esta ordem, ignore este email.
+    </p>
+  </div>
+</body>
+</html>
