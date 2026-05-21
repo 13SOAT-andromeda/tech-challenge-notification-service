@@ -50,3 +50,9 @@ variable "jwt_secret" {
   type        = string
   sensitive   = true
 }
+
+variable "internal_auth_token" {
+  description = "Shared secret token for Service-to-Service (S2S) authentication"
+  type        = string
+  sensitive   = true
+}
