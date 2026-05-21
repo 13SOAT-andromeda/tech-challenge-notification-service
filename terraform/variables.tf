@@ -56,3 +56,13 @@ variable "internal_auth_token" {
   type        = string
   sensitive   = true
 }
+
+variable "admin_email" {
+  description = "Administrative email for system actions"
+  type        = string
+}
+
+variable "admin_document" {
+  description = "Administrative document (CPF) for system actions"
+  type        = string
+}

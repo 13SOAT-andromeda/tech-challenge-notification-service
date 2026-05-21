@@ -74,4 +74,6 @@ jobs:
             -var="mailtrap_from_email=${{ vars.MAILTRAP_FROM_EMAIL }}" \
             -var="mailtrap_from_name=${{ vars.MAILTRAP_FROM_NAME }}" \
             -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
-            -var="internal_auth_token=${{ secrets.INTERNAL_AUTH_TOKEN }}"
+            -var="internal_auth_token=${{ secrets.INTERNAL_AUTH_TOKEN }}" \
+            -var="admin_email=${{ secrets.USER_ADMIN_EMAIL }}" \
+            -var="admin_document=${{ secrets.ADMIN_DOCUMENT }}"

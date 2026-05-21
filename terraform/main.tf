@@ -54,6 +54,8 @@ resource "aws_lambda_function" "this" {
       MAILTRAP_FROM_NAME  = var.mailtrap_from_name
       JWT_SECRET          = var.jwt_secret
       INTERNAL_AUTH_TOKEN = var.internal_auth_token
+      ADMIN_EMAIL         = var.admin_email
+      ADMIN_DOCUMENT      = var.admin_document
     }
   }
 }
