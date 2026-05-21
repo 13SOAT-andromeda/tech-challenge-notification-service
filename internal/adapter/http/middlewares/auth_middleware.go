@@ -10,6 +10,16 @@ import (
 )
 
 func ValidateJWT(request events.APIGatewayProxyRequest) *events.APIGatewayProxyResponse {
+	// Check for internal S2S token first
+	internalToken := request.Headers["X-Internal-Token"]
+	if internalToken == "" {
+		internalToken = request.Headers["x-internal-token"]
+	}
+	expectedToken := os.Getenv("INTERNAL_AUTH_TOKEN")
+	if internalToken != "" && expectedToken != "" && internalToken == expectedToken {
+		return nil // Authorized as system
+	}
+
 	header := request.Headers["Authorization"]
 	if header == "" {
 		header = request.Headers["authorization"]
