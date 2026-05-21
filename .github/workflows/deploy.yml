@@ -72,4 +72,6 @@ jobs:
             -var="s3_bucket_name=${{ vars.S3_BUCKET_NAME }}" \
             -var="mailtrap_url=${{ vars.MAILTRAP_URL }}" \
             -var="mailtrap_from_email=${{ vars.MAILTRAP_FROM_EMAIL }}" \
-            -var="mailtrap_from_name=${{ vars.MAILTRAP_FROM_NAME }}"
+            -var="mailtrap_from_name=${{ vars.MAILTRAP_FROM_NAME }}" \
+            -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
+            -var="internal_auth_token=${{ secrets.INTERNAL_AUTH_TOKEN }}"
