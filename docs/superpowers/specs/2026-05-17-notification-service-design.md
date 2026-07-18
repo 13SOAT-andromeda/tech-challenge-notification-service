@@ -1,6 +1,6 @@
 # Notification Service — Design Spec
 
-**Date:** 2026-05-17  
+**Date:** 2026-05-17 (addendum 2026-07-18 — reused as the video-processor domain's email consumer, see below)
 **Status:** Approved
 
 ---
@@ -8,6 +8,15 @@
 ## Context
 
 The `tech-challenge-notification-service` was initially a Node.js Lambda stub. It was refactored to Go using hexagonal architecture. This spec defines the full feature implementation: SNS-driven email notifications with dynamic, HTTP-manageable templates stored in S3.
+
+### Addendum 2026-07-18 — reused by `video-processor` (ADR-012)
+
+This Lambda is intentionally project-agnostic and is now also deployed as the email consumer for the `video-processor` domain (signup email verification), documented in `docs/superpowers/specs/2026-07-18-notification-signup-integration-design.md` (workspace root) and in `video-processor-authentication-api`'s own spec. No Go code changes were needed — `ConsumeSQS` (`internal/adapter/consumer/notification_consumer.go`, added to this codebase since this spec was originally written) already parses any SNS-in-SQS envelope generically, keyed only by `MessageAttributes.templateType`. Two things do change per deployment context:
+
+- **New template**: `email-verification` (S3 `templates/email-verification.html`, variable `$verification_link`), added via `PUT /templates/email-verification` — same mechanism as any other template, no schema change.
+- **`sqs_queue_name` variable**: `iac-video-processor-infra` names its queue `notification-events-queue-${var.environment}` (with an environment suffix, per that repo's naming convention) — different from this repo's default (`notification-events-queue`, no suffix, inherited from `tech-challenge-fiap`'s convention). The `video-processor` deployment/pipeline must pass `-var="sqs_queue_name=notification-events-queue-prod"` (or equivalent per environment) explicitly; the Terraform code itself (`data "aws_sqs_queue"` + `aws_lambda_event_source_mapping`) needs no change.
+
+The `notification-events-topic`/`-queue` resources that exist in `iac-tech-challenge-infra` (`tech-challenge-fiap`, no longer in active use) are **not** reused — `video-processor` provisions its own, separate resources with the same name pattern in its own AWS account context.
 
 ---
 
