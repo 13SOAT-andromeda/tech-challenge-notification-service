@@ -18,8 +18,42 @@ provider "aws" {
   region = var.aws_region
 }
 
-data "aws_ecr_repository" "this" {
-  name = "tech-challenge-notification-service-repo"
+resource "aws_ecr_repository" "this" {
+  name                 = "tech-challenge-notification-service-repo"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+}
+
+resource "aws_ecr_lifecycle_policy" "this" {
+  repository = aws_ecr_repository.this.name
+
+  policy = jsonencode({
+    rules = [
+      {
+        rulePriority = 1
+        description  = "Keep last 10 images"
+        selection = {
+          tagStatus   = "any"
+          countType   = "imageCountMoreThan"
+          countNumber = 10
+        }
+        action = {
+          type = "expire"
+        }
+      }
+    ]
+  })
+}
+
+# Templates are seeded post-apply via `aws s3 cp` (see templates/) — the
+# service reads them at runtime from templates/{templateType}.html; there's
+# no HTTP route wired to PUT /templates in this Academy Lab deploy.
+resource "aws_s3_bucket" "templates" {
+  bucket        = var.s3_bucket_name
+  force_destroy = true
 }
 
 data "aws_iam_role" "lab_role" {
@@ -34,7 +68,7 @@ resource "aws_lambda_function" "this" {
   function_name = "tech-challenge-notification-service"
   role          = data.aws_iam_role.lab_role.arn
   package_type  = "Image"
-  image_uri     = "${data.aws_ecr_repository.this.repository_url}:${var.image_tag}"
+  image_uri     = "${aws_ecr_repository.this.repository_url}:${var.image_tag}"
 
   reserved_concurrent_executions = 3
 
