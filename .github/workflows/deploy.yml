@@ -81,12 +81,17 @@ jobs:
             -backend-config="bucket=${{ secrets.AWS_S3_TF_STATE_BUCKET_NAME }}" \
             -backend-config="region=${{ secrets.AWS_REGION }}"
 
-      - name: Import pre-existing resources (if not already in state)
+      - name: Re-sync pre-existing resources into state
         run: |
-          terraform state show aws_ecr_repository.this >/dev/null 2>&1 \
-            || terraform import aws_ecr_repository.this tech-challenge-notification-service-repo
-          terraform state show aws_s3_bucket.templates >/dev/null 2>&1 \
-            || terraform import aws_s3_bucket.templates "$TF_VAR_s3_bucket_name"
+          # Unconditional remove+import instead of "import if missing": a
+          # stale entry (e.g. the auto-named bucket Terraform created back
+          # when TF_VAR_s3_bucket_name was still empty) is just as broken as
+          # a missing one, and "state show" alone can't tell the two apart.
+          terraform state rm aws_ecr_repository.this 2>/dev/null || true
+          terraform import aws_ecr_repository.this tech-challenge-notification-service-repo
+
+          terraform state rm aws_s3_bucket.templates 2>/dev/null || true
+          terraform import aws_s3_bucket.templates "$TF_VAR_s3_bucket_name"
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
