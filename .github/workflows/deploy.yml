@@ -47,6 +47,19 @@ jobs:
     defaults:
       run:
         working-directory: terraform
+    env:
+      TF_INPUT: "false"
+      TF_VAR_image_tag: ${{ github.sha }}
+      TF_VAR_sqs_queue_name: notification-events-queue-prod
+      TF_VAR_mailtrap_token: ${{ secrets.MAILTRAP_TOKEN }}
+      TF_VAR_jwt_secret: ${{ secrets.JWT_SECRET }}
+      TF_VAR_s3_bucket_name: ${{ secrets.S3_BUCKET_NAME }}
+      TF_VAR_mailtrap_url: ${{ secrets.MAILTRAP_URL }}
+      TF_VAR_mailtrap_from_email: ${{ secrets.MAILTRAP_FROM_EMAIL }}
+      TF_VAR_mailtrap_from_name: ${{ secrets.MAILTRAP_FROM_NAME }}
+      TF_VAR_internal_auth_token: ${{ secrets.INTERNAL_AUTH_TOKEN }}
+      TF_VAR_admin_email: ${{ secrets.USER_ADMIN_EMAIL }}
+      TF_VAR_admin_document: ${{ secrets.ADMIN_DOCUMENT }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -74,16 +87,4 @@ jobs:
             || terraform import aws_ecr_repository.this tech-challenge-notification-service-repo
 
       - name: Terraform Apply
-        run: |
-          terraform apply -auto-approve \
-            -var="image_tag=${{ github.sha }}" \
-            -var="sqs_queue_name=notification-events-queue-prod" \
-            -var="mailtrap_token=${{ secrets.MAILTRAP_TOKEN }}" \
-            -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
-            -var="s3_bucket_name=${{ secrets.S3_BUCKET_NAME }}" \
-            -var="mailtrap_url=${{ secrets.MAILTRAP_URL }}" \
-            -var="mailtrap_from_email=${{ secrets.MAILTRAP_FROM_EMAIL }}" \
-            -var="mailtrap_from_name=${{ secrets.MAILTRAP_FROM_NAME }}" \
-            -var="internal_auth_token=${{ secrets.INTERNAL_AUTH_TOKEN }}" \
-            -var="admin_email=${{ secrets.USER_ADMIN_EMAIL }}" \
-            -var="admin_document=${{ secrets.ADMIN_DOCUMENT }}"
+        run: terraform apply -auto-approve
