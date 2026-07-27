@@ -26,6 +26,11 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
+      - name: Ensure ECR repository exists
+        run: |
+          aws ecr describe-repositories --repository-names tech-challenge-notification-service-repo \
+            || aws ecr create-repository --repository-name tech-challenge-notification-service-repo
+
       - name: Build, tag, and push image to Amazon ECR
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
@@ -69,11 +74,10 @@ jobs:
             -var="image_tag=${{ github.sha }}" \
             -var="mailtrap_token=${{ secrets.MAILTRAP_TOKEN }}" \
             -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
-            -var="s3_bucket_name=${{ vars.S3_BUCKET_NAME }}" \
-            -var="mailtrap_url=${{ vars.MAILTRAP_URL }}" \
-            -var="mailtrap_from_email=${{ vars.MAILTRAP_FROM_EMAIL }}" \
-            -var="mailtrap_from_name=${{ vars.MAILTRAP_FROM_NAME }}" \
-            -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
+            -var="s3_bucket_name=${{ secrets.S3_BUCKET_NAME }}" \
+            -var="mailtrap_url=${{ secrets.MAILTRAP_URL }}" \
+            -var="mailtrap_from_email=${{ secrets.MAILTRAP_FROM_EMAIL }}" \
+            -var="mailtrap_from_name=${{ secrets.MAILTRAP_FROM_NAME }}" \
             -var="internal_auth_token=${{ secrets.INTERNAL_AUTH_TOKEN }}" \
             -var="admin_email=${{ secrets.USER_ADMIN_EMAIL }}" \
             -var="admin_document=${{ secrets.ADMIN_DOCUMENT }}"
