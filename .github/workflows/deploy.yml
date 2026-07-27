@@ -72,6 +72,7 @@ jobs:
         run: |
           terraform apply -auto-approve \
             -var="image_tag=${{ github.sha }}" \
+            -var="sqs_queue_name=notification-events-queue-prod" \
             -var="mailtrap_token=${{ secrets.MAILTRAP_TOKEN }}" \
             -var="jwt_secret=${{ secrets.JWT_SECRET }}" \
             -var="s3_bucket_name=${{ secrets.S3_BUCKET_NAME }}" \
