@@ -81,10 +81,12 @@ jobs:
             -backend-config="bucket=${{ secrets.AWS_S3_TF_STATE_BUCKET_NAME }}" \
             -backend-config="region=${{ secrets.AWS_REGION }}"
 
-      - name: Import pre-existing ECR repo (if not already in state)
+      - name: Import pre-existing resources (if not already in state)
         run: |
           terraform state show aws_ecr_repository.this >/dev/null 2>&1 \
             || terraform import aws_ecr_repository.this tech-challenge-notification-service-repo
+          terraform state show aws_s3_bucket.templates >/dev/null 2>&1 \
+            || terraform import aws_s3_bucket.templates "$TF_VAR_s3_bucket_name"
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
